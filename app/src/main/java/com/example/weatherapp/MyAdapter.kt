@@ -4,10 +4,9 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.weatherapp.databinding.RowDateBinding
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -16,14 +15,7 @@ import java.time.format.DateTimeFormatter
 class MyAdapter(private val data: List<DayForecast>) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
     @SuppressLint("NewApi")
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val dateView: TextView = view.findViewById(R.id.date)
-        private val sunriseView: TextView = view.findViewById(R.id.sunrise)
-        private val sunsetView: TextView = view.findViewById(R.id.sunset)
-        private val dayTemp: TextView = view.findViewById(R.id.temp)
-        private val tempMax: TextView = view.findViewById(R.id.high)
-        private val tempMin: TextView = view.findViewById(R.id.low)
-        private val forecastView: ImageView = view.findViewById(R.id.forecast_condition)
-
+        private val binding = RowDateBinding.bind(view)
         private val dateFormatter = DateTimeFormatter.ofPattern("MMM dd")
         private val timeFormatter = DateTimeFormatter.ofPattern("h:mm a")
 
@@ -32,16 +24,16 @@ class MyAdapter(private val data: List<DayForecast>) : RecyclerView.Adapter<MyAd
             val sunrise = LocalDateTime.ofInstant(Instant.ofEpochSecond(data.sunrise), ZoneId.systemDefault())
             val sunset = LocalDateTime.ofInstant(Instant.ofEpochSecond(data.sunset), ZoneId.systemDefault())
             val weather = data.weather.firstOrNull()?.icon
-                Glide.with(forecastView)
+                Glide.with(binding.forecastCondition)
                     .load("https://openweathermap.org/img/wn/${weather}@2x.png")
-                    .into(forecastView)
+                    .into(binding.forecastCondition)
 
-            dateView.text = dateFormatter.format(dateTime)
-            sunriseView.append(timeFormatter.format(sunrise))
-            sunsetView.append(timeFormatter.format(sunset))
-            dayTemp.append(data.temp.day.toInt().toString() + "°")
-            tempMax.append(data.temp.max.toInt().toString() + "°")
-            tempMin.append(data.temp.min.toInt().toString() + "°")
+            binding.date.text = dateFormatter.format(dateTime)
+            binding.sunrise.append(timeFormatter.format(sunrise))
+            binding.sunset.append(timeFormatter.format(sunset))
+            binding.temp.append(data.temp.day.toInt().toString() + "°")
+            binding.high.append(data.temp.max.toInt().toString() + "°")
+            binding.low.append(data.temp.min.toInt().toString() + "°")
         }
 
     }
