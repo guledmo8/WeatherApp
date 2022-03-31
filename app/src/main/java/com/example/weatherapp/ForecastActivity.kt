@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.ActionBar
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weatherapp.databinding.ActivityForecastBinding
+import com.example.weatherapp.databinding.FragmentForecastBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -30,7 +31,7 @@ class ForecastActivity : AppCompatActivity() {
         viewModel.forecast.observe(this) {
                 forecast -> bindData(forecast)
         }
-        viewModel.loadData()
+        viewModel.loadData("54437")
     }
 
     private fun bindData(foreCast: Forecast) {
