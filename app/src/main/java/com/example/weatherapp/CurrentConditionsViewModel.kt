@@ -25,4 +25,10 @@ class CurrentConditionsViewModel @Inject constructor(private val service: Api): 
             theCurrentConditions.value = service.getCurrentConditions(zipCode)
         }
     }
+
+    fun loadData(latitude: Float, longitude: Float) = runBlocking {
+        launch{
+            theCurrentConditions.value = service.getCurrentConditionsLatLon(latitude, longitude)
+        }
+    }
 }

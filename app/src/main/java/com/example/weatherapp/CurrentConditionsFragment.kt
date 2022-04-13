@@ -23,7 +23,7 @@ class CurrentConditionsFragment : Fragment(R.layout.fragment_current_conditions 
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentCurrentConditionsBinding.bind(view)
         binding.forecastButton.setOnClickListener {
-            val action= CurrentConditionsFragmentDirections.actionCurrentConditionsFragmentToForecastFragment(args.zipCode)
+            val action= CurrentConditionsFragmentDirections.actionCurrentConditionsFragmentToForecastFragment(args.zipCode, args.latitude, args.longitude)
             findNavController().navigate(action)
         }
     }
@@ -33,7 +33,11 @@ class CurrentConditionsFragment : Fragment(R.layout.fragment_current_conditions 
             bindData(currentConditions)
         }
         try {
-            viewModel.loadData(args.zipCode)
+            if(args.zipCode.length == 5 && args.zipCode.all { it.isDigit() }) {
+                viewModel.loadData(args.zipCode)
+            } else {
+                viewModel.loadData(args.latitude, args.longitude)
+            }
         } catch (exception: HttpException) {
             ErrorDialogFragment().show(childFragmentManager, "")
         }

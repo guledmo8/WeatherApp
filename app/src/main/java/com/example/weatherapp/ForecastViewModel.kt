@@ -27,4 +27,10 @@ class ForecastViewModel @Inject constructor(private val service: Api): ViewModel
 
     }
 
+    fun loadData(latitude: Float, longitude: Float) = runBlocking {
+        launch{
+            theForecast.value = service.getForecastLatLon(latitude, longitude)
+        }
+    }
+
 }
