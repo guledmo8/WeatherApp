@@ -19,4 +19,22 @@ interface Api {
         @Query( "appid") appId: String = "5e7d9b53cd79cc03a42cb84a604eb799",
         @Query( "cnt") cnt: Int = 16
     ) : Forecast
+
+    @GET("weather")
+    suspend fun getCurrentConditionsLatLon(
+        @Query("lat") lat: Float,
+        @Query("lon") lon: Float,
+        @Query( "units") units: String = "Imperial",
+        @Query("appid") appId: String = "5e7d9b53cd79cc03a42cb84a604eb799",
+    ): CurrentConditions
+
+    @GET("forecast/daily")
+    suspend fun getForecastLatLon(
+        @Query("lat") lat: Float,
+        @Query("lon") lon: Float,
+        @Query( "units") units: String = "Imperial",
+        @Query("appid") appId: String = "5e7d9b53cd79cc03a42cb84a604eb799",
+        @Query( "cnt") cnt: Int = 16
+    ): Forecast
+
 }

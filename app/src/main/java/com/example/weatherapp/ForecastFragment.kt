@@ -33,7 +33,11 @@ class ForecastFragment : Fragment(R.layout.fragment_forecast) {
         }
 
         try {
-            viewModel.loadData(args.zipCode)
+            if(args.zipCode.length == 5 && args.zipCode.all { it.isDigit() }) {
+                viewModel.loadData(args.zipCode)
+            } else {
+                viewModel.loadData(args.latitude, args.longitude)
+            }
         } catch (exception: HttpException) {
             ErrorDialogFragment().show(childFragmentManager, "")
         }
