@@ -19,5 +19,11 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="ok">Ok</string>
     <string name="permission">Use My Current Location</string>
+    <string name="notification">Turn on notifications</string>
+    <string name="turn_notification_on">Notification ON</string>
+    <string name="turn_notification_off">Notification OFF</string>
+    <string name="notify_location">Location: %1$s</string>
+    <string name="notify_currentTemp">Current Temp: %1$d°</string>
+
 
 </resources>
