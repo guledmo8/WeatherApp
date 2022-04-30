@@ -1,7 +1,13 @@
 package com.example.weatherapp
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.View
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -18,6 +24,7 @@ class CurrentConditionsFragment : Fragment(R.layout.fragment_current_conditions 
     private val args by navArgs<CurrentConditionsFragmentArgs>()
     private lateinit var binding: FragmentCurrentConditionsBinding
     @Inject lateinit var viewModel: CurrentConditionsViewModel
+    private lateinit var notificationService: NotificationService
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -26,6 +33,8 @@ class CurrentConditionsFragment : Fragment(R.layout.fragment_current_conditions 
             val action= CurrentConditionsFragmentDirections.actionCurrentConditionsFragmentToForecastFragment(args.zipCode, args.latitude, args.longitude)
             findNavController().navigate(action)
         }
+        requireActivity().registerReceiver(updateNotification, IntentFilter(TIMER_UPDATED))
+
     }
     override fun onResume() {
         super.onResume()
@@ -37,13 +46,11 @@ class CurrentConditionsFragment : Fragment(R.layout.fragment_current_conditions 
                 viewModel.loadData(args.zipCode)
             } else {
                 viewModel.loadData(args.latitude, args.longitude)
+                sendNotification()
             }
         } catch (exception: HttpException) {
             ErrorDialogFragment().show(childFragmentManager, "")
         }
-
-
-
     }
 
     private fun bindData(currentConditions: CurrentConditions) {
@@ -62,5 +69,43 @@ class CurrentConditionsFragment : Fragment(R.layout.fragment_current_conditions 
                 .into(binding.conditionIcon)
         }
 
+    }
+    private fun sendNotification() {
+        val builder = NotificationCompat.Builder(requireContext(),
+            CHANNEL_ID)
+            .setAutoCancel(false)
+            .setOngoing(true)
+            .setSmallIcon(R.drawable.sun)
+            .setContentTitle(getString(R.string.notify_location,
+                viewModel.currentConditions.value?.name))
+            .setContentText(getString(R.string.notify_currentTemp,
+                viewModel.currentConditions.value?.main?.temp?.toInt()))
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        with(NotificationManagerCompat.from(requireContext())) {
+            notify(1, builder.build())
+        }
+    }
+
+    private val updateNotification: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val builder = NotificationCompat.Builder(requireContext(),
+                CHANNEL_ID)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(getString(R.string.notify_location,
+                    viewModel.currentConditions.value?.name))
+                .setContentText(getString(R.string.notify_currentTemp,
+                    viewModel.currentConditions.value?.main?.temp?.toInt()))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            with(NotificationManagerCompat.from(requireContext())) {
+                notify(1, builder.build())
+            }
+        }
+    }
+
+
+
+    companion object{
+        const val TIMER_UPDATED = "TIMER_UPDATED"
+        const val CHANNEL_ID = "Weather_Channel"
     }
 }
